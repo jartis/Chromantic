@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Canvas Game Template</title>
+</head>
+
+<body style="margin: 0px !important;overflow:hidden;">
+    <div id="canvas-wrap" style="width: 100vw; height: 100vh; margin: 0px !important;overflow:hidden;">
+        <canvas id="canvas" width="1920" height="1080"></canvas>
+        <div id="overlay">
+
+            <div class="modal micromodal-slide" id="win-modal" aria-hidden="true">
+                <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="win-modal-title">
+                        <main class="modal__content" id="win-modal-content">
+                            <h2 class="modal__title" style="text-align: center;" id="win-modal-title">
+                                YOU WIN!
+                            </h2>
+                            <p style="text-align: center;">Excellent job!</p>
+                        </main>
+                        <footer class="modal__footer " style="text-align: center;">
+                            <button data-micromodal-close onclick="doNewGame" class="modal__btn modal__btn-primary ">New Game</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal micromodal-slide" id="settings-modal" aria-hidden="true">
+                <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+                        <header class="modal__header">
+                            <h2 class="modal__title" id="settings-modal-title">
+                                Options
+                            </h2>
+                            <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                        </header>
+                        <main class="modal__content" id="settings-modal-content">
+                            <input type="number" id="gridSizeInput" name="gridSizeInput" min="5" max="20">
+                            <label for="gridSizeInput"> Grid Size</label><br>
+                            <input type="number" id="diffInput" name="diffInput" min="0" max="2">
+                            <label for="diffInput"> Difficulty</label><br>
+                            <hr>
+                        </main>
+                        <footer class="modal__footer ">
+                            <button data-micromodal-close class="modal__btn modal__btn-primary ">OK</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="js/canv.js "></script>
+    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js "></script>
+</body>
+
+</html>
