@@ -1,6 +1,6 @@
 {
-    "name": "Chromantic",
+    "name": "Chromancy",
     "desc": "Sort the color blocks to make a smooth gradient",
     "version": "0.1",
-    "icon": "thumb.png",
+    "icon": "res/icon.png",
 }

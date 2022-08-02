@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>Canvas Game Template</title>
+    <title>Chromancy</title>
 </head>
 
 <body style="margin: 0px !important;overflow:hidden;">
@@ -40,11 +40,61 @@
                             <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                         </header>
                         <main class="modal__content" id="settings-modal-content">
-                            <input type="number" id="gridSizeInput" name="gridSizeInput" min="5" max="20">
+                            <select id="gridSizeInput" name="gridSizeInput">
+                                <option value="1">Small</option>
+                                <option value="2">Medium</option>
+                                <option value="3">Large</option>
+                            </select>
                             <label for="gridSizeInput"> Grid Size</label><br>
-                            <input type="number" id="diffInput" name="diffInput" min="0" max="2">
-                            <label for="diffInput"> Difficulty</label><br>
+                            <select id="diffInput" name="diffInput">   
+                                <option value="1">Easy</option>
+                                <option value="2">Medium</option>
+                                <option value="3">Difficult</option>
+                            </select>
+                            <label for="diffInput "> Difficulty</label><br>
                             <hr>
+                        </main>
+                        <footer class="modal__footer ">
+                            <button data-micromodal-close class="modal__btn modal__btn-primary ">OK</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal micromodal-slide" id="info-modal" aria-hidden="true">
+                <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+                        <header class="modal__header">
+                            <h2 class="modal__title" id="info-modal-title">
+                                About Chromancy
+                            </h2>
+                            <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                        </header>
+                        <main class="modal__content" id="info-modal-content">
+                            <p>
+                                Chromancy is a gradient puzzle game, where you sort the colored tiles to create a smooth gradient between the locked squares
+                            </p>
+                            <hr>
+                            <p>
+                                In the Options menu (click the gear), you can change the size of the puzzle (5x9, 7x12, or 16x19) and the difficulty of the puzzle (easy, medium, or difficult).
+                            </p>
+                            <hr>
+                            <p>
+                                Many thanks to my awesome
+                                <a href="https://patreon.com/jartis">Patrons</a> for their support in putting this together:
+                                <ul>
+                                    <li>Joseph Maxwell</li>
+                                    <li>M</li>
+                                    <li>C. 'Uberfuzzy.ninja' Stafford</li>
+                                    <li>DowntownCrowd</li>
+                                    <li>Kevin Cooney</li>
+                                    <li>AX Kuhn</li>
+                                    <li>Doe</li>
+                                    <li>Belinda Ward</li>
+                                </ul>
+                            </p>
+                            <p>Follow my other projects at <a href="https://jartis.dev">jartis.dev</a></p>
+                            <hr> 🦥💘🐸
                         </main>
                         <footer class="modal__footer ">
                             <button data-micromodal-close class="modal__btn modal__btn-primary ">OK</button>

@@ -20,6 +20,8 @@ var bgcolor = '#333333';
 var screenOrientation = LANDSCAPE; // 0 Horiz, 1 Vert
 var ModalUp = false;
 var gearImg = new Image();
+var logoImg = new Image();
+var qImg = new Image();
 
 var colorGrid;
 
@@ -29,8 +31,11 @@ var dragSrcTY = -1;
 var lastTX = -1;
 var lastTY = -1;
 
-let gridSize = 4;
-let cellSize = 1080 / gridSize;
+let gridWidth = 16;
+let gridHeight = 9;
+let gridSize = 3;
+let cellWidth = 1820 / gridWidth;
+let cellHeight = 1080 / gridHeight;
 
 // Difficulty 0: Easy, 1: Medium, 2: Hard
 // 0: gridSize hints
@@ -41,20 +46,22 @@ let difficulty = 1;
 //#region Game logic goes here
 
 function InitGame() {
-    cellSize = 1080 / gridSize;
+    cellWidth = 1820 / gridWidth;
+    cellHeight = 1080 / gridHeight;
     let baseHue = Math.floor(Math.random() * 360);
     let HueMod = Math.floor(Math.random() * 90) + 45;
     colorGrid = [];
-    for (let i = 0; i < gridSize; i++) {
+    for (let i = 0; i < gridHeight; i++) {
         colorGrid[i] = [];
-        for (let j = 0; j < gridSize; j++) {
-            if ((i == 0 || i == gridSize - 1) && (j == 0 || j == gridSize - 1)) {
+        for (let j = 0; j < gridWidth; j++) {
+            if ((i == 0 || i == gridHeight - 1) && (j == 0 || j == gridWidth - 1)) {
                 colorGrid[i][j] = {
                     color: RandomVibrantColor(baseHue, 100, (Math.random() * 33) + 33),
-                    num: (i * gridSize) + j,
-                    x: 420 + (cellSize * i),
-                    y: (cellSize * j),
-                    size: cellSize,
+                    num: (i * gridHeight) + j,
+                    x: (cellWidth * i),
+                    y: (cellHeight * j),
+                    w: cellWidth,
+                    h: cellHeight,
                     locked: true,
                     sizeDelt: 0,
                 };
@@ -63,10 +70,11 @@ function InitGame() {
             } else {
                 colorGrid[i][j] = {
                     color: '#000000',
-                    num: (i * gridSize) + j,
-                    x: 420 + (cellSize * i),
-                    y: (cellSize * j),
-                    size: cellSize,
+                    num: (i * gridHeight) + j,
+                    x: (cellWidth * i),
+                    y: (cellHeight * j),
+                    w: cellWidth,
+                    h: cellHeight,
                     locked: false,
                     sizeDelt: 0,
                 };
@@ -82,36 +90,36 @@ function InitGame() {
 function addLocks() {
     let numLocks = 0;
     switch (difficulty) {
-        case 0:
-            numLocks = gridSize * 2;
-            break;
         case 1:
-            numLocks = gridSize;
+            numLocks = (gridWidth + gridHeight);
             break;
         case 2:
+            numLocks = gridWidth;
+            break;
+        case 3:
             numLocks = 0;
             break;
     }
     for (let l = 0; l < numLocks; l++) {
-        let i = Math.floor(Math.random() * gridSize);
-        let j = Math.floor(Math.random() * gridSize);
+        let i = Math.floor(Math.random() * gridHeight);
+        let j = Math.floor(Math.random() * gridWidth);
         while (colorGrid[i][j].locked) {
-            i = Math.floor(Math.random() * gridSize);
-            j = Math.floor(Math.random() * gridSize);
+            i = Math.floor(Math.random() * gridHeight);
+            j = Math.floor(Math.random() * gridWidth);
         }
         colorGrid[i][j].locked = true;
     }
 }
 
 function shuffleGrid() {
-    for (let pos = 0; pos < (gridSize * gridSize); pos++) {
-        let i = pos % gridSize;
-        let j = Math.floor(pos / gridSize);
+    for (let pos = 0; pos < (gridWidth * gridHeight); pos++) {
+        let j = pos % gridWidth;
+        let i = Math.floor(pos / gridWidth);
         if (colorGrid[i][j].locked) continue;
 
-        let secondpos = Math.floor(Math.random() * ((gridSize * gridSize) - pos)) + pos;
-        let secondi = secondpos % gridSize;
-        let secondj = Math.floor(secondpos / gridSize);
+        let secondpos = Math.floor(Math.random() * ((gridWidth * gridHeight) - pos)) + pos;
+        let secondj = secondpos % gridWidth;
+        let secondi = Math.floor(secondpos / gridWidth);
         if (colorGrid[secondi][secondj].locked) continue;
 
         let temp = colorGrid[i][j];
@@ -122,20 +130,20 @@ function shuffleGrid() {
 }
 
 function TweenInitialGrid() {
-    // Do top row
-    for (let j = 1; j < gridSize - 1; j++) {
-        colorGrid[j][0].color = colorLerp(colorGrid[0][0].color, colorGrid[gridSize - 1][0].color, j / gridSize);
+    // Do Left row
+    for (let j = 1; j < gridHeight - 1; j++) {
+        colorGrid[j][0].color = colorLerp(colorGrid[0][0].color, colorGrid[gridHeight - 1][0].color, j / gridHeight);
     }
 
-    // Do bottom row
-    for (let j = 1; j < gridSize - 1; j++) {
-        colorGrid[j][gridSize - 1].color = colorLerp(colorGrid[0][gridSize - 1].color, colorGrid[gridSize - 1][gridSize - 1].color, j / gridSize);
+    // Do right row
+    for (let j = 1; j < gridHeight - 1; j++) {
+        colorGrid[j][gridWidth - 1].color = colorLerp(colorGrid[0][gridWidth - 1].color, colorGrid[gridHeight - 1][gridWidth - 1].color, j / gridHeight);
     }
 
     // Do everything in between
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 1; j < gridSize - 1; j++) {
-            colorGrid[i][j].color = colorLerp(colorGrid[i][0].color, colorGrid[i][gridSize - 1].color, j / gridSize);
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 1; j < gridWidth - 1; j++) {
+            colorGrid[i][j].color = colorLerp(colorGrid[i][0].color, colorGrid[i][gridWidth - 1].color, j / gridWidth);
         }
     }
 }
@@ -151,15 +159,18 @@ function colorLerp(colA, colB, t) {
 
 function Update() {
     // Game logic here
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
             if (colorGrid[i][j].sizeDelt != 0) {
-                colorGrid[i][j].size += colorGrid[i][j].sizeDelt;
-                if (colorGrid[i][j].size < (cellSize * 0.8)) {
-                    colorGrid[i][j].size = cellSize * 0.8;
+                colorGrid[i][j].w += colorGrid[i][j].sizeDelt;
+                colorGrid[i][j].h += colorGrid[i][j].sizeDelt;
+                if (colorGrid[i][j].w < (cellWidth * 0.8)) {
+                    colorGrid[i][j].w = cellWidth * 0.8;
+                    colorGrid[i][j].h = cellHeight * 0.8;
                     colorGrid[i][j].sizeDelt = 0;
-                } else if (colorGrid[i][j].size > cellSize) {
-                    colorGrid[i][j].size = cellSize;
+                } else if (colorGrid[i][j].w > cellWidth) {
+                    colorGrid[i][j].w = cellWidth;
+                    colorGrid[i][j].h = cellHeight;
                     colorGrid[i][j].sizeDelt = 0;
                 }
                 colorGrid[i][j].sizeDelt *= 1.5;
@@ -169,9 +180,9 @@ function Update() {
 
     let didWin = true;
     // Check for win condition
-    for (let pos = 0; pos < (gridSize * gridSize); pos++) {
-        let j = pos % gridSize;
-        let i = Math.floor(pos / gridSize);
+    for (let pos = 0; pos < (gridWidth * gridHeight); pos++) {
+        let j = pos % gridWidth;
+        let i = Math.floor(pos / gridWidth);
         if (colorGrid[i][j].num != pos) {
             didWin = false;
             break;
@@ -190,27 +201,29 @@ function Update() {
 }
 
 function DrawGame() {
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            if ((!isDragging) || i != dragSrcTX || j != dragSrcTY) {
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
+            if ((!isDragging) || i != dragSrcTY || j != dragSrcTX) {
                 ctx.fillStyle = colorGrid[i][j].color;
-                ctx.fillRect(colorGrid[i][j].x, colorGrid[i][j].y, colorGrid[i][j].size, colorGrid[i][j].size);
+                ctx.fillRect(colorGrid[i][j].x, colorGrid[i][j].y, colorGrid[i][j].w, colorGrid[i][j].h);
                 if (colorGrid[i][j].locked) {
                     ctx.fillStyle = '#000000';
-                    ctx.fillRect(colorGrid[i][j].x + (cellSize / 2 - 4), colorGrid[i][j].y + (cellSize / 2 - 4), 8, 8);
+                    ctx.fillRect(colorGrid[i][j].x + (cellWidth / 2 - 4), colorGrid[i][j].y + (cellHeight / 2 - 4), 8, 8);
                 }
             }
         }
     }
     if (isDragging) {
         // redraw the moving square
-        let i = dragSrcTX;
-        let j = dragSrcTY;
+        let i = dragSrcTY;
+        let j = dragSrcTX;
         ctx.fillStyle = colorGrid[i][j].color;
-        ctx.fillRect(colorGrid[i][j].x - (cellSize * 0.4), colorGrid[i][j].y - (cellSize * 0.4), colorGrid[i][j].size, colorGrid[i][j].size);
+        ctx.fillRect(colorGrid[i][j].x - (cellWidth * 0.4), colorGrid[i][j].y - (cellHeight * 0.4), colorGrid[i][j].w, colorGrid[i][j].h);
     }
 
     ctx.drawImage(gearImg, srcCanvas.width - 100, 0, 100, 100);
+    ctx.drawImage(logoImg, srcCanvas.width - 100, 100, 100, 880);
+    ctx.drawImage(qImg, srcCanvas.width - 100, 980, 100, 100);
     // Game element drawing goes here
 
 }
@@ -225,6 +238,18 @@ window.onload = function() {
     window.addEventListener('mouseup', HandleMouse);
     window.addEventListener('mousemove', HandleMouse);
     window.addEventListener('keydown', HandleKeys);
+
+    let logoLoaded = false;
+
+    logoImg.addEventListener('load', function() {
+        this.logoLoaded = true;
+    }, false);
+    logoImg.src = 'res/title.png'; // Set source path
+
+    qImg.addEventListener('load', function() {
+        this.logoLoaded = true;
+    }, false);
+    qImg.src = 'res/q.png'; // Set source path
 
     // Do initialization here
     gearImg.addEventListener('load', function() {
@@ -257,6 +282,20 @@ function HandleMouse(e) {
                     let newSize = parseInt(document.getElementById('gridSizeInput').value);
                     if (newDiff != difficulty || newSize != gridSize) {
                         difficulty = newDiff;
+                        switch (newSize) {
+                            case 3:
+                                gridWidth = 16;
+                                gridHeight = 9;
+                                break;
+                            case 2:
+                                gridWidth = 12;
+                                gridHeight = 7;
+                                break;
+                            case 1:
+                                gridWidth = 9;
+                                gridHeight = 5;
+                                break;
+                        }
                         gridSize = newSize;
                         InitGame();
                     }
@@ -264,50 +303,59 @@ function HandleMouse(e) {
                 }
             });
             return;
+        } else if (mX > GAMESIZEX - 100 && mY > GAMESIZEY - 100) {
+            window.removeEventListener('click', HandleMouse);
+            modalUp = true;
+            MicroModal.show('info-modal', {
+                onClose: modal => {
+                    modalUp = false;
+                    window.addEventListener('click', HandleMouse);
+                }
+            });
         }
     } else {
 
         // Mouse handling here
         if (e.type == 'mousedown' && !isDragging) {
-            dragSrcTX = Math.floor((mX - 420) / cellSize);
-            dragSrcTY = Math.floor(mY / cellSize);
-            if (dragSrcTX < 0 || dragSrcTX > gridSize - 1 || dragSrcTY < 0 || dragSrcTY > gridSize - 1) {
+            dragSrcTX = Math.floor(mX / cellWidth);
+            dragSrcTY = Math.floor(mY / cellHeight);
+            if (dragSrcTX < 0 || dragSrcTX > gridWidth - 1 || dragSrcTY < 0 || dragSrcTY > gridHeight - 1) {
                 return true;
             }
-            if (colorGrid[dragSrcTX][dragSrcTY].locked) {
+            if (colorGrid[dragSrcTY][dragSrcTX].locked) {
                 return true;
             }
             isDragging = true;
-            colorGrid[dragSrcTX][dragSrcTY].sizeDelt = -1;
-            colorGrid[dragSrcTX][dragSrcTY].x = mX;
-            colorGrid[dragSrcTX][dragSrcTY].y = mY;
+            colorGrid[dragSrcTY][dragSrcTX].sizeDelt = -1;
+            colorGrid[dragSrcTY][dragSrcTX].x = mX;
+            colorGrid[dragSrcTY][dragSrcTX].y = mY;
         } else if (e.type == 'mouseup' && isDragging) {
             isDragging = false;
-            let tgtTX = Math.floor((mX - 420) / cellSize);
-            let tgtTY = Math.floor(mY / cellSize);
-            if (colorGrid[tgtTX][tgtTY].locked) {
+            let tgtTX = Math.floor(mX / cellWidth);
+            let tgtTY = Math.floor(mY / cellHeight);
+            if (colorGrid[tgtTY][tgtTX].locked) {
                 tgtTX = dragSrcTX;
                 tgtTY = dragSrcTY;
             }
 
-            let tmp = colorGrid[tgtTX][tgtTY];
-            colorGrid[tgtTX][tgtTY] = colorGrid[dragSrcTX][dragSrcTY];
-            colorGrid[dragSrcTX][dragSrcTY] = tmp;
+            let tmp = colorGrid[tgtTY][tgtTX];
+            colorGrid[tgtTY][tgtTX] = colorGrid[dragSrcTY][dragSrcTX];
+            colorGrid[dragSrcTY][dragSrcTX] = tmp;
             resetGridLocations();
         }
         if (e.type == 'mousemove' && isDragging) {
-            colorGrid[dragSrcTX][dragSrcTY].x = mX;
-            colorGrid[dragSrcTX][dragSrcTY].y = mY;
+            colorGrid[dragSrcTY][dragSrcTX].x = mX;
+            colorGrid[dragSrcTY][dragSrcTX].y = mY;
 
             // Shrink the square we are currently over?
-            let curTX = Math.floor((mX - 420) / cellSize);
-            let curTY = Math.floor(mY / cellSize);
+            let curTX = Math.floor(mX / cellWidth);
+            let curTY = Math.floor(mY / cellHeight);
             if (curTX != lastTX || curTY != lastTY) {
                 if (curTX != dragSrcTX || curTY != dragSrcTY) {
-                    if (!(colorGrid[curTX][curTY].locked)) {
-                        colorGrid[curTX][curTY].sizeDelt = -1;
+                    if (!(colorGrid[curTY][curTX].locked)) {
+                        colorGrid[curTY][curTX].sizeDelt = -1;
                     }
-                    colorGrid[lastTX][lastTY].sizeDelt = 1;
+                    colorGrid[lastTY][lastTX].sizeDelt = 1;
                 }
                 lastTX = curTX;
                 lastTY = curTY;
@@ -317,10 +365,10 @@ function HandleMouse(e) {
 }
 
 function resetGridLocations() {
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            colorGrid[i][j].x = 420 + (cellSize * i);
-            colorGrid[i][j].y = (cellSize * j);
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
+            colorGrid[i][j].x = (cellWidth * j);
+            colorGrid[i][j].y = (cellHeight * i);
             colorGrid[i][j].sizeDelt = 1;
         }
     }
