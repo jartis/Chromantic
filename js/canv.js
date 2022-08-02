@@ -34,8 +34,8 @@ var lastTY = -1;
 let gridWidth = 16;
 let gridHeight = 9;
 let gridSize = 3;
-let cellWidth = 1820 / gridWidth;
-let cellHeight = 1080 / gridHeight;
+let cellWidth = (GAMESIZEX - 100) / gridWidth;
+let cellHeight = (GAMESIZEY) / gridHeight;
 
 // Difficulty 0: Easy, 1: Medium, 2: Hard
 // 0: gridSize hints
@@ -46,8 +46,8 @@ let difficulty = 1;
 //#region Game logic goes here
 
 function InitGame() {
-    cellWidth = 1820 / gridWidth;
-    cellHeight = 1080 / gridHeight;
+    cellWidth = (GAMESIZEX - 100) / gridWidth;
+    cellHeight = GAMESIZEY / gridHeight;
     let baseHue = Math.floor(Math.random() * 360);
     let HueMod = Math.floor(Math.random() * 90) + 45;
     colorGrid = [];
@@ -57,7 +57,7 @@ function InitGame() {
             if ((i == 0 || i == gridHeight - 1) && (j == 0 || j == gridWidth - 1)) {
                 colorGrid[i][j] = {
                     color: RandomVibrantColor(baseHue, 100, (Math.random() * 33) + 33),
-                    num: (i * gridHeight) + j,
+                    num: (i * gridWidth) + j,
                     x: (cellWidth * i),
                     y: (cellHeight * j),
                     w: cellWidth,
@@ -70,7 +70,7 @@ function InitGame() {
             } else {
                 colorGrid[i][j] = {
                     color: '#000000',
-                    num: (i * gridHeight) + j,
+                    num: (i * gridWidth) + j,
                     x: (cellWidth * i),
                     y: (cellHeight * j),
                     w: cellWidth,
